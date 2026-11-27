@@ -21,3 +21,4 @@ jobs:
           ci_token: ${{ secrets.UNOTUSK_CI_TOKEN }}
           project_id: ${{ vars.UNOTUSK_PROJECT_ID }}
           mode: enforced
+          bundle: "true"

@@ -3,7 +3,7 @@ description: "Pre-merge architectural constraint and ADR consistency verificatio
 author: "Unotusk Pvt. Ltd."
 inputs:
   server_url:
-    description: "Base URL of the Unotusk API Server (e.g. http://localhost:28100 or public HTTPS URL)"
+    description: "Base URL of the Unotusk API Server (e.g. http://localhost:28100)"
     required: true
   ci_token:
     description: "Project CI Token for machine-to-machine authentication (uno_ci_...)"
@@ -18,13 +18,13 @@ inputs:
   bundle:
     description: "Whether to package and stream an air-gapped commit bundle ('true' or 'false')"
     required: false
-    default: "false"
+    default: "true"
 
 runs:
   using: "composite"
   steps:
     - name: Execute Decision Gate Client
-      shell: bash
+      shell: powershell
       env:
         UNOTUSK_SERVER_URL: ${{ inputs.server_url }}
         UNOTUSK_CI_TOKEN: ${{ inputs.ci_token }}
@@ -34,4 +34,5 @@ runs:
         GITHUB_EVENT_PATH: ${{ github.event_path }}
         GITHUB_STEP_SUMMARY: ${{ env.GITHUB_STEP_SUMMARY }}
       run: |
-        python "${{ github.action_path }}/runner.py"
+        python "${{ github.action_path }}\runner.py"
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
