@@ -1,0 +1,37 @@
+name: "Unotusk Architectural Decision Gate"
+description: "Pre-merge architectural constraint and ADR consistency verification gate (Track T5)"
+author: "Unotusk Pvt. Ltd."
+inputs:
+  server_url:
+    description: "Base URL of the Unotusk API Server (e.g. http://localhost:28100 or public HTTPS URL)"
+    required: true
+  ci_token:
+    description: "Project CI Token for machine-to-machine authentication (uno_ci_...)"
+    required: true
+  project_id:
+    description: "Target Project UUID registered in Unotusk"
+    required: true
+  mode:
+    description: "Gate enforcement mode ('enforced' or 'advisory')"
+    required: false
+    default: "enforced"
+  bundle:
+    description: "Whether to package and stream an air-gapped commit bundle ('true' or 'false')"
+    required: false
+    default: "false"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Execute Decision Gate Client
+      shell: bash
+      env:
+        UNOTUSK_SERVER_URL: ${{ inputs.server_url }}
+        UNOTUSK_CI_TOKEN: ${{ inputs.ci_token }}
+        UNOTUSK_PROJECT_ID: ${{ inputs.project_id }}
+        UNOTUSK_GATE_MODE: ${{ inputs.mode }}
+        UNOTUSK_USE_BUNDLE: ${{ inputs.bundle }}
+        GITHUB_EVENT_PATH: ${{ github.event_path }}
+        GITHUB_STEP_SUMMARY: ${{ env.GITHUB_STEP_SUMMARY }}
+      run: |
+        python "${{ github.action_path }}/runner.py"

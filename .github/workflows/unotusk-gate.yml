@@ -1,0 +1,23 @@
+name: Unotusk Architectural Gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  unotusk-decision-check:
+    name: Unotusk Architectural Decision Check
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Execute Architectural Gate
+        uses: ./.github/actions/unotusk-gate
+        with:
+          server_url: ${{ secrets.UNOTUSK_SERVER_URL }}
+          ci_token: ${{ secrets.UNOTUSK_CI_TOKEN }}
+          project_id: ${{ vars.UNOTUSK_PROJECT_ID }}
+          mode: enforced
