@@ -66,11 +66,12 @@ def get_changed_files(base_sha: str, head_sha: str) -> list[str]:
 
 
 def create_git_bundle(base_sha: str, head_sha: str) -> str | None:
-    """Packages commit range into an air-gapped base64-encoded git bundle."""
+    """Packages candidate commits into an air-gapped base64-encoded git bundle."""
     with tempfile.TemporaryDirectory(prefix="unotusk_bundle_") as tmpdir:
         bundle_file = os.path.join(tmpdir, "candidate.bundle")
+        # Package HEAD into a standalone bundle so server can verify and clone complete history
         res = subprocess.run(
-            ["git", "bundle", "create", bundle_file, f"{base_sha}..{head_sha}"],
+            ["git", "bundle", "create", bundle_file, "HEAD"],
             capture_output=True,
             check=False,
         )
